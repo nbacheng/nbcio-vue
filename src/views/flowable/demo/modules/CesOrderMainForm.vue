@@ -196,7 +196,7 @@
     methods: {
       getOrderCode() {
         putAction(this.url.rule.orderCode, this.model).then(res => {
-         // 执行成功，获取返回的值，并赋到页面上
+         // 执行成功，获取返回的订单编号值，并赋到页面上
         if (res.success) {
         this.model.orderCode = res.result
         }

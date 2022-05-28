@@ -1,6 +1,6 @@
 <template>
   <a-modal
-    :width="modalWidth"
+    :width="1200"
     :visible="visible"
     :title="title"
     @ok="handleSubmit"
@@ -159,7 +159,7 @@
             this.dataSource = res.result.records;
             this.ipagination.total = res.result.total;
             if(res.total ===1) {
-              this.title = '选择商品【再次回车可以直接选中】'
+              this.title = '选择商品'
               this.$nextTick(() => this.$refs.goods.focus());
             } else {
               this.title = '选择商品'
@@ -181,7 +181,7 @@
       showModal(goodCode) {
         this.visible = true;
         this.title = '选择商品'
-        this.queryParam.q = goodCode;
+        this.queryParam.code = goodCode;
         this.$nextTick(() => this.$refs.goods.focus());
         this.loadGoodsData();
         this.form.resetFields();
@@ -250,22 +250,20 @@
       onSearch() {
         if(this.dataSource && this.dataSource.length===1) {
           if(this.queryParam.q === this.dataSource[0].code||
-            this.queryParam.q === this.dataSource[0].name||
-            this.queryParam.q === this.dataSource[0].price||
-            this.queryParam.q === this.dataSource[0].chuc_date) {
+            this.queryParam.q === this.dataSource[0].name) {
             let arr = []
             arr.push(this.dataSource[0].id)
             this.selectedRowKeys = arr
             this.handleSubmit()
           } else {
-            this.loadMaterialData(1)
+            this.loadGoodsData(1)
           }
         } else {
-          this.loadMaterialData(1)
+          this.loadGoodsData(1)
         }
       },
       modalFormOk() {
-        this.loadMaterialData()
+        this.loadGoodsData()
       },
       rowAction(record, index) {
         return {

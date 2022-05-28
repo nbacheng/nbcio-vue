@@ -112,7 +112,7 @@ export const GoodsModalMixin = {
                 //多个条码
                 this.$refs.cesOrderGoods.getValues((error, values) => {
                   values.pop()  //移除最后一行数据
-                  let mArr = []
+                  let mArr = values
                   for (let i = 0; i < mList.length; i++) {
                     let mInfo = mList[i]
                     this.changeColumnShow(mInfo)
@@ -121,15 +121,16 @@ export const GoodsModalMixin = {
                   }
                   let totalPrice = 0
                   for (let j = 0; j < mArr.length; j++) {
-                    totalPrice += mArr[j].zongprice-0
+                    totalPrice += mArr[j].zongPrice-0
                   }
                   console.log("onValueChange mArr2",mArr)
                   this.cesOrderGoodsTable.dataSource = mArr
-                  //target.statisticsColumns.zongprice = totalPrice
+                  target.statisticsColumns.zongprice = totalPrice
+                  this.model.money = totalPrice
                   //target.setValues(mArrValues)
                   //target.recalcAllStatisticsColumns()
                   // 更新form表单的值
-                  that.autoChangePrice(target) 
+                  //that.autoChangePrice(target) 
                })
             }  
           });
@@ -138,9 +139,9 @@ export const GoodsModalMixin = {
           num = value-0
           price = row.price-0 //单价
           zongprice = (price*num).toFixed(2)-0
-          console.log("row.goodCode",row.goodCode)
           target.setValues([{rowKey: row.id, values: {zongPrice: zongprice}}])
           target.recalcAllStatisticsColumns()
+          that.autoChangePrice(target) 
           break;
         case "price":
           num = row.num-0 //数量
@@ -148,6 +149,7 @@ export const GoodsModalMixin = {
           zongprice = (price*num).toFixed(2)-0
           target.setValues([{rowKey: row.id, values: {zongPrice: zongprice}}])
           target.recalcAllStatisticsColumns()
+          that.autoChangePrice(target) 
           break;
         case "zongPrice":
           num = row.num-0 //数量
@@ -155,13 +157,15 @@ export const GoodsModalMixin = {
           price = (zongprice/num).toFixed(2)-0 //单价
           target.setValues([{rowKey: row.id, values: {price: price}}])
           target.recalcAllStatisticsColumns()
+          that.autoChangePrice(target) 
           break;
       }
     },
     
-    //改变一些需要统计的值
+    //更新一些需要统计的值
     autoChangePrice(target) {
-      
+      let totalPrice = target.statisticsColumns.zongPrice-0
+      this.model.money = totalPrice
     },
   
     //使得型号、颜色、扩展信息、sku等为隐藏
