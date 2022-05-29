@@ -18,7 +18,7 @@
             <a-row :gutter="24">
               <a-col :md="6" :sm="8">
                 <a-form-item label="商品" :labelCol="{span: 5}" :wrapperCol="{span: 18, offset: 1}">
-                  <a-input ref="goods" placeholder="名称" v-model="queryParam.q"></a-input>
+                  <a-input ref="goods" placeholder="名称" v-model="queryParam.code"></a-input>
                 </a-form-item>
               </a-col>
               <span style="float: left;overflow: hidden;" class="table-page-search-submitButtons">
@@ -70,7 +70,7 @@
     data() {
       return {
         queryParam: {
-          q: ''
+          code: ''
         },
         labelCol: {
           xs: { span: 24 },

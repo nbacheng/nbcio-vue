@@ -23,7 +23,7 @@ export const GoodsModalMixin = {
         wrapperCol6: {span: 12}
       },
        url: {
-         getbyids: "/test/cesShopGoods/queryByIds",
+         getbycodes: "/test/cesShopGoods/queryByCodes",
        },
        
     };
@@ -102,9 +102,9 @@ export const GoodsModalMixin = {
       switch(column.key) {
         case "goodCode":
           param = {
-            ids: value,
+            codes: value,
           }
-          getAction(this.url.getbyids,param).then((res) => {
+          getAction(this.url.getbycodes,param).then((res) => {
             console.log("onValueChange res",res)
             if (res && res.code === 200) {
               let mList = res.result;
