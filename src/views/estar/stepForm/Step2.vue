@@ -75,19 +75,9 @@
             }
           },
           {
-            title: '工号',
-            align: "center",
-            dataIndex: 'empno'
-          },
-          {
             title: '姓名',
             align: "center",
-            dataIndex: 'username'
-          },
-          {
-            title: '部门编号',
-            align: "center",
-            dataIndex: 'depno'
+            dataIndex: 'realname'
           },
           {
             title: '部门',
@@ -98,17 +88,17 @@
           {
             title: '个人奖金',
             align: "center",
-            dataIndex: 'ydjj'
+            dataIndex: 'bysfjj'
           },
           {
-            title: '代扣保险',
+            title: '个人工资',
             align: "center",
-            dataIndex: 'dkbx'
+            dataIndex: 'bysfgz'
           },
           {
             title: '入司时间',
             align: "center",
-            dataIndex: 'registerdate',
+            dataIndex: 'createTime',
             customRender: function(text) {
               return !text ? "" : (text.length > 10 ? text.substr(0, 10) : text)
             }
@@ -168,16 +158,16 @@
         ],
         dsSubTotal: [],
         url: {
-          listsalarybydep: "/estar/oaGzspb/listsalarybydep",
-          listtotalbysubdep: "/estar/oaGzspb/listtotalbysubdep",
-          listsubdep: "/estar/oaSubdep/listsubdep",
+          listsalarybydep: "/estar/oaSalary/listsalarybydep",
+          listtotalbysubdep: "/estar/oaSalaryTotal/listtotalbysubdep",
+          listsubdep: "/estar/oaSalary/listsubdep",
         },
         newArr: [],
         newDataSource: [],
       }
     },
     mounted() {
-      this.depname = Vue.ls.get("depname")
+      //this.depname = Vue.ls.get("depname")
       this.yearmonth = Vue.ls.get("yearmonth")
     },
     created() {
@@ -186,20 +176,14 @@
         salaryyear: Vue.ls.get("yearmonth").trim().substring(0, 4),
         salarymonth: Vue.ls.get("yearmonth").trim().substring(4, 6),
       };
-      /*const paramsSubTotal = {
-        upperno: Vue.ls.get("depno"),
-        salaryyear: Vue.ls.get("yearmonth").trim().substring(0, 4),
-        salarymonth: Vue.ls.get("yearmonth").trim().substring(4, 6),
-      };*/
+
       const paramsSubDep = {
-        upperno: Vue.ls.get("depno"),
+        depno: Vue.ls.get("depno"),
       };
       this.loadDepSalaryData(this.url.listsalarybydep, paramsDepSalary);      
       this.getSubDep(this.url.listsubdep, paramsSubDep);
       console.log("havesubdep1="+this.havesubdep)
-      //if (this.havesubdep) {
-      //  this.loadSubTotalData(this.url.listtotalbysubdep, paramsSubTotal);
-      //}
+      
     },
     computed: {
       //token header
@@ -223,8 +207,14 @@
         this.loading = true;
         getAction(url, params).then((res) => {
           if (res.success) {
-            this.dsDepSalary = res.result.records || res.result;
-            let arraytotal = ['ydjj', 'dkbx'];
+             console.log("loadDepSalaryData res",res)
+             if (res.result.length>0) {
+               this.depname = res.result[0].depname;
+               Vue.ls.set("depname", this.depname);
+               console.log("this.depname=",this.depname)
+             }
+            this.dsDepSalary = res.result;
+            let arraytotal = ['bysfjj', 'bysfgz'];
             this.tableAddTotalRow(this.colDepSalary, this.dsDepSalary, arraytotal)
           } else {
             this.$message.warning(res.message)
@@ -241,6 +231,8 @@
         this.loading = true;
         getAction(url, params).then((res) => {
           if (res.success) {
+            console.log("loadSubTotalData res",res)
+            
             this.dsSubTotal = res.result.records || res.result;
             let arraytotal = ['rs', 'bysfgz', 'byjbf', 'bysfjj', 'sysfgz', 'syjbf', 'sysfjj'];
             this.tableAddTotalRow(this.colSubTotal, this.dsSubTotal, arraytotal)
@@ -258,7 +250,7 @@
         }
         this.loading = true;
         const paramsSubTotal = {
-          upperno: Vue.ls.get("depno"),
+          depno: Vue.ls.get("depno"),
           salaryyear: Vue.ls.get("yearmonth").trim().substring(0, 4),
           salarymonth: Vue.ls.get("yearmonth").trim().substring(4, 6),
         };

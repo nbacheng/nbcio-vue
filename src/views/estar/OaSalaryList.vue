@@ -123,14 +123,14 @@
             }
           },
           {
-            title:'人员',
+            title:'姓名',
             align:"center",
-            dataIndex: 'username_dictText'
+            dataIndex: 'realname'
           },
           {
             title:'部门编号',
             align:"center",
-            dataIndex: 'orgCode_dictText'
+            dataIndex: 'depname'
           },
           {
             title:'年',

@@ -6,11 +6,7 @@
         :labelCol="{span: 5}"
         :wrapperCol="{span: 19}"
       >
-        <a-select label-in-value  @change="handleChange1">
-          <a-select-option value="08">人力资源部</a-select-option>
-          <a-select-option value="07">信息工程部</a-select-option>
-          <a-select-option value="03">综合管理部</a-select-option>
-        </a-select>
+         <j-select-depart v-model="depno" @change="handleChange1" />
       </a-form-item>
       
       <a-form-item
@@ -52,6 +48,7 @@
     data() {
         return {
           monthFormat: 'YYYYMM',
+          depno: '',
         };
       },
     /*created() {
@@ -60,9 +57,7 @@
     methods: {
       handleChange1(value) {
         console.log(value); // { key: "", label: "" }
-        console.log(value.label);
-        Vue.ls.set("depno", value.key);
-        Vue.ls.set("depname", value.label);
+        Vue.ls.set("depno", value);
       },
       handleChange2(value) {
         console.log(value.format('YYYYMM')); // { key: "", label: "" }

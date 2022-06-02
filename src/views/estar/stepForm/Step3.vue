@@ -77,7 +77,7 @@
           rule: {
                     applyNum: ruleBaseURL + 'oa_xz_code'
           },
-          salaryapprove: "/estar/oaGzspb/salaryapprove",
+          salaryapprove: "/estar/oaSalary/salaryapprove",
           salaryapprovalAdd: "/estar/oaSalaryapproval/add"
         },
       }
