@@ -1,7 +1,7 @@
-Ant Design Jeecg Vue
+NBCIO Vue
 ====
 
-当前最新版本： 3.0.0（发布日期：2021-11-01）
+基于ant-design-vue-jeecg的前端版本： 3.0.0（发布日期：2021-11-01）
 
 Overview
 ----
@@ -15,6 +15,7 @@ Jeecg-boot 的前端UI框架，采用前后端分离方案，提供强大代码�
 #### 前端技术
  
 - 基础框架：[ant-design-vue](https://github.com/vueComponent/ant-design-vue) - Ant Design Of Vue 实现
+- Element UI 
 - JavaScript框架：Vue
 - Webpack
 - node
@@ -33,7 +34,7 @@ Jeecg-boot 的前端UI框架，采用前后端分离方案，提供强大代码�
 - 拉取项目代码
 ```bash
 git clone https://github.com/zhangdaiscott/jeecg-boot.git
-cd  jeecg-boot/ant-design-vue-jeecg
+cd  nbcio-boot/nbcio-vue
 ```
 
 - 安装依赖
@@ -131,5 +132,5 @@ Docker 镜像使用
     127.0.0.1   jeecg-boot-system
   
 # 6.访问前台项目
-  http://localhost:80
+  http://localhost:8988
 ``` 
