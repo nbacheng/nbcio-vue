@@ -7,7 +7,7 @@ Overview
 ----
 
 基于 [Ant Design of Vue](https://vuecomponent.github.io/ant-design-vue/docs/vue/introduce-cn/) 实现的 Ant Design Pro  Vue 版
-Jeecg-boot 的前端UI框架，采用前后端分离方案，提供强大代码生成器的低代码平台。
+nbcio-boot 的前端UI框架，采用前后端分离方案，提供强大代码生成器的低代码平台。
 前端页面代码和后端功能代码一键生成，不需要写任何代码，保持jeecg一贯的强大！！
 
 
@@ -33,8 +33,8 @@ Jeecg-boot 的前端UI框架，采用前后端分离方案，提供强大代码�
 
 - 拉取项目代码
 ```bash
-git clone https://github.com/zhangdaiscott/jeecg-boot.git
-cd  nbcio-boot/nbcio-vue
+git clone https://gitee.com/nbacheng/nbcio-vue.git
+cd  nbcio-vue
 ```
 
 - 安装依赖
@@ -113,23 +113,23 @@ Docker 镜像使用
  ``` 
 # 1.修改前端项目的后台域名
     .env.development
-    域名改成： http://jeecg-boot-system:8080/jeecg-boot
+    域名改成： http://nbcio-boot-system:8080/nbcio-boot
    
 # 2.先进入打包前端项目
   yarn run build
 
 # 3.构建镜像
-  docker build -t nginx:jeecgboot .
+  docker build -t nginx:nbcioboot .
 
 # 4.启动镜像
-  docker run --name jeecg-boot-nginx -p 80:80 -d nginx:jeecgboot
+  docker run --name nbcio-boot-nginx -p 80:80 -d nginx:nbcioboot
 
 # 5.配置host
 
-    # jeecgboot
-    127.0.0.1   jeecg-boot-redis
-    127.0.0.1   jeecg-boot-mysql
-    127.0.0.1   jeecg-boot-system
+    # nbcioboot
+    127.0.0.1   nbcio-boot-redis
+    127.0.0.1   nbcio-boot-mysql
+    127.0.0.1   nbcio-boot-system
   
 # 6.访问前台项目
   http://localhost:8988
