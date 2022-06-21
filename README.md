@@ -132,5 +132,5 @@ Docker 镜像使用
     127.0.0.1   nbcio-boot-system
   
 # 6.访问前台项目
-  http://localhost:8988
+  http://localhost:9888
 ``` 
