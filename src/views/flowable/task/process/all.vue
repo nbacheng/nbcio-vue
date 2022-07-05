@@ -163,7 +163,7 @@
        </el-dialog>
        <!-- 委派 转办 选择人员 -->
        <a-modal
-         title="选择委派转办人员" width="900px" :maskClosable="false"
+         title="选择委派或转办人员" width="900px" :maskClosable="false"
          :confirmLoading="confirmLoading"
          :visible="delegateassign"
          :footer="null"
