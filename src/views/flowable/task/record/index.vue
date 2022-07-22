@@ -95,6 +95,8 @@
                          <j-upload v-model="fileitem.fileurl" :disabled = "true"  text="转办上传的文件" ></j-upload>
                       </el-form-item>
                     </el-form>  
+                    <el-tag type="warning" v-if="commentitem.type === '7'"> {{commentitem.comment}}</el-tag>  <!--撤回信息-->
+                    <el-tag type="warning" v-if="commentitem.type === '6'"> {{commentitem.comment}}</el-tag>  <!--终止信息-->
                  </p>
               </el-card>
             </el-timeline-item>

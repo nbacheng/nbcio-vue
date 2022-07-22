@@ -1,4 +1,6 @@
-import { deepClone } from '@/utils/index'
+import {
+  deepClone
+} from '@/utils/index'
 
 const componentChild = {}
 /**
@@ -14,9 +16,31 @@ keys.forEach(key => {
   componentChild[tag] = value
 })
 
+/*
 function vModel(dataObject, defaultValue) {
   dataObject.props.value = defaultValue
 
+  dataObject.on.input = val => {
+    this.$emit('input', val)
+  }
+}*/
+
+// add by nbacheng 2022-07-19
+function vModel(dataObject, defaultValue, config) {
+  //获取上传表单元素组件 上传的文件
+  if (config === 'el-upload') {
+    // 上传表单元素组件 的成功和移除事件;
+    dataObject.attrs['on-success'] = (response, file, fileList) => {
+      this.$emit('upload', response, file, fileList)
+    }
+
+    dataObject.attrs['on-remove'] = (file, fileList) => {
+      this.$emit('deleteUpload', file, fileList)
+    }
+    return
+  }
+  //获取 普通表单元素的值
+  dataObject.props.value = defaultValue
   dataObject.on.input = val => {
     this.$emit('input', val)
   }
@@ -52,14 +76,17 @@ function buildDataObject(confClone, dataObject) {
     if (key === '__vModel__') {
       vModel.call(this, dataObject, confClone.__config__.defaultValue)
     } else if (dataObject[key] !== undefined) {
-      if (dataObject[key] === null
-        || dataObject[key] instanceof RegExp
-        || ['boolean', 'string', 'number', 'function'].includes(typeof dataObject[key])) {
+      if (dataObject[key] === null ||
+        dataObject[key] instanceof RegExp || ['boolean', 'string', 'number', 'function'].includes(typeof dataObject[
+          key])) {
         dataObject[key] = val
       } else if (Array.isArray(dataObject[key])) {
         dataObject[key] = [...dataObject[key], ...val]
       } else {
-        dataObject[key] = { ...dataObject[key], ...val }
+        dataObject[key] = {
+          ...dataObject[key],
+          ...val
+        }
       }
     } else {
       dataObject.attrs[key] = val

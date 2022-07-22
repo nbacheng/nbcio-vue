@@ -376,7 +376,8 @@ export default {
     /** 撤回任务 */
     handleRevoke(row){
       const params = {
-        instanceId: row.procInsId
+        instanceId: row.procInsId,
+        dataId: row.businessKey
       }
       revokeProcess(params).then( res => {
         this.$message.success(res.message);
