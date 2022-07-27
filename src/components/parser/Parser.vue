@@ -1,6 +1,8 @@
 <script>
 import { deepClone } from '@/utils/index'
 import render from '@/components/render/render.js'
+import Vue from 'vue'
+import { ACCESS_TOKEN } from "@/store/mutation-types"
 
 const ruleTrigger = {
   'el-input': 'blur',
@@ -115,33 +117,46 @@ function buildListeners(scheme) {
   //上传表单元素组件的成功和移除事件; // add by nbacheng 2022-07-19
   listeners.upload = (response, file, fileList) => setUpload.call(this, config, scheme,response, file, fileList)
   listeners.deleteUpload = (file, fileList) => deleteUpload.call(this, config, scheme,file, fileList)
+  //listeners.download = (file) => download.call(this, file)
   // add by nbacheng 2022-07-19
   return listeners
 }
 
 //获取上传表单元素组件 上传的文件 // add by nbacheng 2022-07-19
 function setUpload(config, scheme, response, file, fileList) {
-//response: 上传接口返回的数据
-  let fileObj = {name: response.data.name, url: response.data.url, fileType: response.data.contentType}
-  let oldValue = JSON.parse(this[this.formConf.formModel][scheme.vModel])
+  //response: 上传接口返回的数据sponse}
+  var filename=response.message.substring(response.message.lastIndexOf('/')+1)  //获取文件名称
+  let fileObj = {name: filename, url: response.message}
+  let oldValue = JSON.parse(this[this.formConf.formModel][scheme.__vModel__])
+  console.log("setUpload response=",response)
   if (oldValue) {
     oldValue.push(fileObj)
   } else {
     oldValue = [fileObj]
   }
-
+  console.log("setUpload oldValue=",oldValue)
   this.$set(config, 'defaultValue', JSON.stringify(oldValue))
-  this.$set(this[this.formConf.formModel], scheme.vModel, JSON.stringify(oldValue))
+  this.$set(this[this.formConf.formModel], scheme.__vModel__, JSON.stringify(oldValue))
 }
 //获取上传表单元素组件 删除文件后的文件列表
 function deleteUpload(config, scheme, file, fileList) {
-  let oldValue = JSON.parse(this[this.formConf.formModel][scheme.vModel])
+  let oldValue = JSON.parse(this[this.formConf.formModel][scheme.__vModel__])
 
   //file 删除的文件
   //过滤掉删除的文件
   let newValue = oldValue.filter(item => item.name !== file.name)
   this.$set(config, 'defaultValue', JSON.stringify(newValue))
-  this.$set(this[this.formConf.formModel], scheme.vModel, JSON.stringify(newValue))
+  this.$set(this[this.formConf.formModel], scheme.__vModel__, JSON.stringify(newValue))
+}
+
+
+//点击进行下载文件
+function download(file) {
+  var a = document.createElement('a');
+  var event = new MouseEvent('click');
+  a.download = file.name;
+  a.href = file.url;
+  a.dispatchEvent(event);
 }
 // add by nbacheng 2022-07-19
 
@@ -168,8 +183,17 @@ export default {
   methods: {
     initFormData(componentList, formData) {
       componentList.forEach(cur => {
+        const vModel = cur.__vModel__
+        const val = formData[vModel]
         const config = cur.__config__
-        if (cur.__vModel__) formData[cur.__vModel__] = config.defaultValue
+        if (config.tag === 'el-upload') {
+          // 如果需要token，可以设置 
+          const token = Vue.ls.get(ACCESS_TOKEN);
+          cur['headers'] = {"X-Access-Token":token};
+        }  
+        if (cur.__vModel__) {
+            formData[cur.__vModel__] = config.defaultValue
+        }
         if (config.children) this.initFormData(config.children, formData)
       })
     },

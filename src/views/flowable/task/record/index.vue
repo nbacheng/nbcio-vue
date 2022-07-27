@@ -14,11 +14,17 @@
         </div>
       </el-col>
 
-      <!--流程处理表单模块-->
+      <!--流程处理表单设计器模块,从flowable表里获取表单数据-->
       <el-col :span="16" :offset="6" v-if="variableOpen">
         <div >
           <parser :key="new Date().getTime()" :form-conf="variablesData" />
         </div>
+        
+        <div style="margin-left:10%;margin-bottom: 20px">
+           <!--对上传文件进行显示处理，临时方案 add by nbacheng 2022-07-27 -->
+           <el-upload :on-preview="handleFilePreview" :file-list="fileList" v-if="fileDisplay" />
+        </div>
+           
         <div style="margin-left:10%;margin-bottom: 20px;font-size: 14px;" v-if="finished === 'true'">
           <el-button icon="el-icon-edit-outline" type="success" size="mini" @click="handleComplete">审批</el-button>
           <!--                <el-button  icon="el-icon-edit-outline" type="primary" size="mini" @click="handleDelegate">委派</el-button>-->
@@ -30,7 +36,7 @@
       </el-col>
 
 
-      <!--初始化流程加载表单信息-->
+      <!--初始化流程加载默认表单信息-->
       <el-col :span="16" :offset="4" v-if="formConfOpen">
         <div class="test-form">
           <parser :key="new Date().getTime()" :form-conf="formConf" @submit="submitForm" ref="parser"
@@ -217,6 +223,9 @@
   } from '@/views/flowable/mixins/flowableMixin'
 
   import { getCustomForm  } from "@/api/form";
+  import Vue from 'vue'
+  import { ACCESS_TOKEN } from "@/store/mutation-types"
+  
   
   export default {
     name: "Record",
@@ -305,6 +314,8 @@
         variables: [], // 流程变量数据
         variablesData: {}, // 流程变量数据
         variableOpen: false, // 是否加载流程变量数据
+        fileDisplay: false, // 是否显示上传的文件控件
+        fileList: [], //表单设计器上传的文件列表
         returnTaskList: [], // 回退列表数据
         finished: 'false',
         completeTitle: null,
@@ -342,17 +353,13 @@
 
     },
     mounted() {
-      // // 表单数据回填，模拟异步请求场景
-      // setTimeout(() => {
-      //   // 请求回来的表单数据
-      //   const data = {
-      //     field102: '18836662555'
-      //   }
-      //   // 回填数据
-      //   this.fillFormData(this.formConf, data)
-      //   // 更新表单
-      //   this.key = +new Date().getTime()
-      // }, 1000)
+      //表单数据回填，模拟异步请求场景
+      setTimeout(() => {
+        // 回填数据,这里主要是处理文件显示
+        this.fillFormData(this.variablesData.fields, this.variablesData)
+        // 更新表单
+        this.key = +new Date().getTime()
+      }, 1000)
     },
     methods: {
       /** 查询部门下拉树结构 */
@@ -620,14 +627,6 @@
       gettest() {
         console.log("get test model=", this.customForm.model);
       },
-      fillFormData(form, data) {
-        form.fields.forEach(item => {
-          const val = data[item.__vModel__]
-          if (val) {
-            item.__config__.defaultValue = val
-          }
-        })
-      },
       /** 获取流程变量内容 */
       processVariables(taskId) {
         if (taskId) {
@@ -635,9 +634,50 @@
           getProcessVariables(taskId).then(res => {
             // this.variables = res.result.variables;
             this.variablesData = res.result.variables;
+            console.log("this.variablesData=",this.variablesData)
             this.variableOpen = true
           });
         }
+      },
+      //点击文件列表中已上传文件进行下载
+      handleFilePreview(file) {
+        var a = document.createElement('a');
+        var event = new MouseEvent('click');
+        a.download = file.name;
+        a.href = file.url;
+        a.dispatchEvent(event);
+        console.log(file)
+      },
+      fillFormData(fields, formConf) {
+        const { formModel, formRef } = formConf
+        fields.forEach((item, i) => {
+          const vModel = item.__vModel__
+          const val = item.__config__.defaultValue 
+          // 特殊处理el-upload，包括 回显图片
+          if (item.__config__.tag === 'el-upload') {
+            
+            // 回显图片
+            console.log("fillFormData val=",JSON.parse(val))
+            this.fileDisplay = true
+            console.log('item=',item['list-type'])
+            if(item['list-type'] != 'text') {
+              this.fileList = ''    //隐藏加的el-upload文件列表
+              item['file-list'] = JSON.parse(val)
+            }
+            else {  //图片
+              this.fileList = JSON.parse(val)
+              item['file-list'] = '' //隐藏加的表单设计器的文件列表
+            }
+            
+          }
+          // 设置各表单项的默认值（回填表单），包括el-upload的默认值
+          if (val) {
+            item.__config__.defaultValue = val
+          }
+          if (Array.isArray(item.__config__.children)) {
+            this.fillFormData(item.__config__.children, formConf)
+          }
+        })
       },
       /** 根据当前任务或者流程设计配置的下一步节点 */
       getNextFlowNode(taskId) {
@@ -712,6 +752,7 @@
       /** 接收子组件传的值 */
       getData(data) {
         if (data) {
+          console.log("enter getData data=",data)
           const variables = [];
           data.fields.forEach(item => {
             let variableData = {};
@@ -729,6 +770,7 @@
             variables.push(variableData)
           })
           this.variables = variables;
+          console.log("this.variables=",variables)
         }
       },
       /** 申请流程表单数据提交 */
