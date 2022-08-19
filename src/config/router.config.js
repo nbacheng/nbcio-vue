@@ -1,5 +1,8 @@
 import { UserLayout, TabLayout, RouteView, BlankLayout, PageView } from '@/components/layouts'
-
+import UserBox from "@/views/im/layout/userBox.vue";
+import ChatBox from "@/views/im/layout/chatBox.vue";
+import ChatGroupBox from "@/views/im/layout/chatGroupBox.vue";
+import DeptBox from "@/views/im/layout/deptBox.vue";
 /**
  * 走菜单，走权限控制
  * @type {[null,null]}
@@ -322,7 +325,38 @@ export const constantRouterMap = [
       },
     ]
   },
-
+  {// add by nbacheng 2022-08-10
+    path: "/im/index",
+    name: "impage",
+    component: () => import(/* imindex */'@/views/im/index.vue'),
+    children: [
+      {
+        path: "chatBox",
+        name: "chatBox",
+        component: ChatBox
+      },
+      {
+        path: "/",
+        name: "userIndex",
+        component: UserBox
+      },
+      {
+        path: "userBox",
+        name: "userBox",
+        component: UserBox
+      },
+      {
+        path: "dept",
+        name: "dept",
+        component: DeptBox
+      },
+      {
+        path: "chatGroupBox",
+        name: "chatGroupBox",
+        component: ChatGroupBox
+      }
+    ]
+  },
   // {
   //   path: '/',
   //   name: 'index',
