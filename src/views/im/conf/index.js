@@ -1,8 +1,7 @@
 export default {
   name: "conf",
-  app_name: "V-IM",
+  app_name: "NBCIO-IM",
   http_protocol: "http",
-  http_port: 8080,
   ws_port: 9326,
   init: "/im/user/init",
   his_url: "/im/message/list",
@@ -10,11 +9,7 @@ export default {
   ws_protocol: "ws",
   getHostUrl: function() {
     return (
-      this.http_protocol +
-      "://" +
-      localStorage.getItem("host") +
-      ":" +
-      this.http_port + "/nbcio-boot"
+      window._CONFIG['domianURL']
     );
   },
   getInitUrl: function() {
