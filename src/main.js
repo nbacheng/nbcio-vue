@@ -7,6 +7,8 @@ import Storage from 'vue-ls'
 import router from './router'
 import store from './store/'
 import { VueAxios } from "@/utils/request"
+
+
 import ViewUI from "view-design";
 import "view-design/dist/styles/iview.css";
 
@@ -59,6 +61,7 @@ if (process.env.VUE_APP_MODE === "web") {
 } 
 //For IM add by nbacheng 2022-08-17
 Vue.use(ElementUI);
+Vue.use(ViewUI);
 //表单验证
 import { rules } from '@/utils/rules'
 Vue.prototype.rules = rules
@@ -78,7 +81,6 @@ Vue.use(preview)
 Vue.use(vueBus);
 Vue.use(JeecgComponents);
 Vue.use(VueAreaLinkage);
-Vue.use(ViewUI);
 
 SSO.init(() => {
   main()

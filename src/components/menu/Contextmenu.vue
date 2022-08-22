@@ -45,7 +45,7 @@ export default {
     closeMenu (e) {
       //add by nbacheng 2022-08-12 在新窗口打开一个没有左侧菜单的页面
       if(e.target.href && e.target.href.indexOf('/im/index')>0) {
-        window.open(e.target.href,'_blank',"scrollbars=yes,resizable=1,modal=false,alwaysRaised=yes")
+        window.open(e.target.href,'_blank')
       }
       //add by nbacheng 2022-08-12 
       if (this.visible === true && ['menuitemicon', 'menuitem'].indexOf(e.target.getAttribute('role')) < 0) {

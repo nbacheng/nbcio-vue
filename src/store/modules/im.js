@@ -230,7 +230,7 @@ const im = {
     }
   },
   plugins: [createPersistedState()],
-  strict: process.env.NODE_ENV !== "production",
+//  strict: process.env.NODE_ENV !== "production",
 }
 
 export default im
