@@ -8,6 +8,10 @@ import router from './router'
 import store from './store/'
 import { VueAxios } from "@/utils/request"
 
+
+import ViewUI from "view-design";
+import "view-design/dist/styles/iview.css";
+
 require('@jeecg/antd-online-mini')
 require('@jeecg/antd-online-mini/dist/OnlineForm.css')
 
@@ -50,11 +54,22 @@ import '@/components/JVxeCells/install'
 // ElementUI 放置最前，Antd放置于后
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
+//For IM add by nbacheng 2022-08-17
+import { dateStr, formatDateTime } from "@/utils/im/ChatUtils.js";
+if (process.env.VUE_APP_MODE === "web") {
+  Vue.prototype.winControl = require("@/mode/webControl").default;
+} 
+//For IM add by nbacheng 2022-08-17
 Vue.use(ElementUI);
+Vue.use(ViewUI);
 //表单验证
 import { rules } from '@/utils/rules'
 Vue.prototype.rules = rules
 Vue.config.productionTip = false
+//IM
+Vue.prototype.formatDateTime = formatDateTime;
+Vue.prototype.dateStr = dateStr;
+
 Vue.use(Storage, config.storageOptions)
 Vue.use(Antd)
 Vue.use(VueAxios, router)

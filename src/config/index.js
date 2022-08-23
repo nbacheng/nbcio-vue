@@ -8,3 +8,5 @@ window._CONFIG['casPrefixUrl'] = process.env.VUE_APP_CAS_BASE_URL
 window._CONFIG['onlinePreviewDomainURL'] =  process.env.VUE_APP_ONLINE_BASE_URL
 window._CONFIG['staticDomainURL'] = Vue.prototype.API_BASE_URL + '/sys/common/static'
 window._CONFIG['pdfDomainURL'] = Vue.prototype.API_BASE_URL+ '/sys/common/pdf/pdfPreviewIframe'
+//设置主机地址 add by nbacheng
+window._CONFIG['hostAddress'] = process.env.VUE_APP_HOST_ADDRESS
