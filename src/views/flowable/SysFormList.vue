@@ -88,13 +88,18 @@
 
       </a-table>
       
-      <!--表单配置详情-->
-      <el-dialog :title="formTitle" :visible.sync="formConfOpen" width="60%" append-to-body>
+      <!--表单配置详情 formgenerator-->
+      <!--<el-dialog :title="formTitle" :visible.sync="formConfOpen" width="60%" append-to-body>
         <div class="test-form">
           <parser :key="new Date().getTime()"  :form-conf="formConf" />
         </div>
+      </el-dialog>-->
+      <!--表单配置详情 formdesigner-->
+      <el-dialog :title="formTitle" :visible.sync="formConfOpen" width="60%" append-to-body>
+        <div class="test-form">
+          <preview :itemList="itemList"  :formConf="formConf" v-if="formConfOpen"/>
+        </div>
       </el-dialog>
-      
     </div>
 
     <sys-form-modal ref="modalForm" @ok="modalFormOk"></sys-form-modal>
@@ -109,6 +114,7 @@
   import SysFormModal from './modules/SysFormModal'
   import Editor from '@/components/Editor';
   import Parser from '@/components/parser/Parser'
+  import preview from "@/components/formdesigner/components/preview";
 
   export default {
     name: 'SysFormList',
@@ -116,7 +122,8 @@
     components: {
        Editor,
        Parser,
-      SysFormModal
+       SysFormModal,
+       preview
     },
     data () {
       return {
@@ -177,6 +184,7 @@
         formTitle: "",
         // 是否显示弹出层
         open: false,
+        itemList:[],//formdesigner预览显示数据
       }
     },
     created() {
@@ -190,27 +198,23 @@
     methods: {
       /** 新增按钮操作 */
       handleAdd() {
-        // this.reset();
-        // this.open = true;
-        // this.title = "添加流程表单";
-        this.$router.push({ path: '/tool/build/index', query: {id: null }})
+        //this.$router.push({ path: '/tool/build/index', query: {id: null }})
+        this.$router.push({ path: '/formdesigner/formdesigner', query: {id: null }})
       },
       /** 表单配置信息 */
       handleDetail(row){
+        console.log("handleDetail row=",row);
         this.formConfOpen = true;
         this.formTitle = "流程表单配置详细";
-        this.formConf = JSON.parse(row.formContent)
+        const formcontent = JSON.parse(row.formContent);
+        console.log("handleDetail formcontent=",formcontent);
+        this.formConf = formcontent.config;
+        this.itemList = formcontent.list;
       },
       /** 修改按钮操作 */
       handleUpdate(row) {
-        // this.reset();
-        // const formId = row.formId || this.ids
-        // getForm(formId).then(response => {
-        //   this.form = response.data;
-        //   this.open = true;
-        //   this.title = "修改流程表单";
-        // });
-        this.$router.push({ path: '/tool/build/index', query: {id: row.id }})
+        //this.$router.push({ path: '/tool/build/index', query: {id: row.id }})
+        this.$router.push({ path: '/formdesigner/formdesigner', query: {id: row.id }})
       },
       /** 提交按钮 */
       submitForm() {

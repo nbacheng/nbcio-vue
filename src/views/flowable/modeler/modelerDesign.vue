@@ -125,12 +125,19 @@
       <component :disabled= "customForm.disabled" v-bind:is="customForm.formComponent" :model= "customForm.model"
                  :customFormData= "customForm.customFormData"></component>
     </a-modal>
-    <!--表单配置详情-->
-        <el-dialog :title="formTitle" :visible.sync="formConfOpen" width="60%" append-to-body>
+    <!--表单配置详情formgenerator-->
+      <!--  <el-dialog :title="formTitle" :visible.sync="formConfOpen" width="60%" append-to-body>
           <div class="test-form">
             <parser :key="new Date().getTime()"  :form-conf="formConf" />
           </div>
-        </el-dialog>
+        </el-dialog>-->
+     <!--表单配置详情formdesigner-->
+         <el-dialog :title="formTitle" :visible.sync="formConfOpen" width="60%" append-to-body>
+           <div class="test-form">
+              <preview :itemList="itemList"  :formConf="formConf" v-if="formConfOpen"/>
+           </div>
+         </el-dialog>   
+        
     <!--挂载表单-->
     <el-dialog :title="formDeployTitle" :visible.sync="formDeployOpen" width="60%" append-to-body>
       <el-row :gutter="64">
@@ -204,6 +211,7 @@
   import Parser from '@/components/parser/Parser'
   //import { JeecgListMixin } from '@/mixins/JeecgListMixin'
   import { flowableMixin } from '@/views/flowable/mixins/flowableMixin'
+  import preview from "@/components/formdesigner/components/preview";
 
   export default {
     //mixins: [flowableMixin, JeecgListMixin],
@@ -211,6 +219,7 @@
     components: {
       bpmnModeler,
       Parser,
+      preview,
     },
     data() {
       return {
@@ -229,6 +238,7 @@
         // 是否显示弹出层
         open: false,
         formConfOpen: false,
+        itemList:[],//formdesigner预览显示数据
         formTitle: "",
         formDeployOpen: false,
         formCustomOpen: false,
@@ -424,6 +434,7 @@
           this.formTitle = "表单详情";
           this.formConfOpen = true;
           this.formConf = JSON.parse(res.result.formContent)
+          this.itemList = this.formConf.list
         })
       },
       // 打开自定义业务表单

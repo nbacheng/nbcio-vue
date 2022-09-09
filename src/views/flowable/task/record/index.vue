@@ -15,14 +15,16 @@
       </el-col>
 
       <!--流程处理表单设计器模块,从flowable表里获取表单数据-->
-      <el-col :span="16" :offset="6" v-if="variableOpen">
-        <div >
+      <el-col :span="16" :offset="4" v-if="variableOpen">
+        <!--<div > <!--处理流程过程中显示formgenerator表单信息
           <parser :key="new Date().getTime()" :form-conf="variablesData" />
-        </div>
-        
+        </div>-->
+          <div > <!--处理流程过程中显示formdesigner表单信息-->
+            <form-viewer ref="formViewer" v-model="formVal" :buildData="formViewData"></form-viewer>
+		      </div>
         <div style="margin-left:10%;margin-bottom: 20px">
            <!--对上传文件进行显示处理，临时方案 add by nbacheng 2022-07-27 -->
-           <el-upload :on-preview="handleFilePreview" :file-list="fileList" v-if="fileDisplay" />
+           <el-upload action="#" :on-preview="handleFilePreview" :file-list="fileList" v-if="fileDisplay" />
         </div>
            
         <div style="margin-left:10%;margin-bottom: 20px;font-size: 14px;" v-if="finished === 'true'">
@@ -36,14 +38,29 @@
       </el-col>
 
 
-      <!--初始化流程加载默认表单信息-->
-      <el-col :span="16" :offset="4" v-if="formConfOpen">
+      <!--初始化流程加载默认formgenerator表单信息-->
+      <!--<el-col :span="16" :offset="4" v-if="formConfOpen">
         <div class="test-form">
           <parser :key="new Date().getTime()" :form-conf="formConf" @submit="submitForm" ref="parser"
             @getData="getData" />
         </div>
+      </el-col>-->
+      
+      <!--初始化流程加载默认formdesigner表单信息-->
+      <el-col :span="16" :offset="4" v-if="formConfOpen">
+        <div class="test-form">
+          <form-builder ref="formBuilder" v-model="formVal" :buildData="formCode" />
+          <div style="margin-bottom:15px;text-align:center">
+              <el-button type="primary" class="button" @click="submitForm">提交</el-button>
+          </div>
+        </div>
       </el-col>
-
+      <!--初始化流程加载显示formdesigner表单-->
+      <el-col :span="16" :offset="4" v-if="formViewOpen">
+        <div class="test-form">
+          <form-viewer ref="formView" v-model="formVal" :buildData="formCode" />
+        </div>
+      </el-col>
     </el-card>
 
     <!--流程流转记录-->
@@ -225,7 +242,10 @@
   import { getCustomForm  } from "@/api/form";
   import Vue from 'vue'
   import { ACCESS_TOKEN } from "@/store/mutation-types"
-  
+  //for formdesigner
+  import formBuilder from '@/components/formdesigner/components/formBuilder'
+  import formViewer from '@/components/formdesigner/components/formViewer'
+
   
   export default {
     name: "Record",
@@ -234,6 +254,8 @@
       Parser,
       bpmnModeler,
       DeptUserInfo,
+      formBuilder,
+      formViewer,
     },
     props: {},
     data() {
@@ -311,6 +333,10 @@
           isNew: false,
           disableSubmit: true
         },
+        formCode:'',
+        formVal:'',
+        formViewOpen: false,  //是否显示formdesigner的输入后提交的表单
+        formViewData: '',    //显示formdesigner的输入后提交的表单数据
         variables: [], // 流程变量数据
         variablesData: {}, // 流程变量数据
         variableOpen: false, // 是否加载流程变量数据
@@ -355,11 +381,14 @@
     mounted() {
       //表单数据回填，模拟异步请求场景
       setTimeout(() => {
-        // 回填数据,这里主要是处理文件显示
-        this.fillFormData(this.variablesData.fields, this.variablesData)
+        // 回填数据,这里主要是处理文件列表显示,临时解决，以后应该在form设计器完成
+        this.fillFormData(this.variablesData.list, this.variablesData)
         // 更新表单
         this.key = +new Date().getTime()
       }, 1000)
+    },
+    computed:{
+      
     },
     methods: {
       /** 查询部门下拉树结构 */
@@ -600,9 +629,12 @@
               console.log("this.flowRecordList", this.flowRecordList);
               // 流程过程中不存在初始化表单 直接读取的流程变量中存储的表单值
               if (res.result.hasOwnProperty('formData')) {
-                console.log("res.result.formData", res.result.formData);
+                console.log("flowRecord res.result.formData", res.result.formData);
                 this.formConf = res.result.formData;
-                console.log("this.formConf", this.formConf);
+                console.log("flowRecord this.formConf", this.formConf);
+                this.formCode = JSON.stringify(res.result.formData);
+                console.log("flowRecord this.formCode", this.formCode);
+                
                 this.customForm.disabled = true;
                 this.customForm.visible = true;
                 this.customForm.formComponent = this.getFormComponent(res.result.routeName).component;
@@ -635,6 +667,8 @@
             // this.variables = res.result.variables;
             this.variablesData = res.result.variables;
             console.log("this.variablesData=",this.variablesData)
+            this.formViewData = JSON.stringify(this.variablesData);
+            this.formVal = JSON.stringify(this.variablesData.formValue);
             this.variableOpen = true
           });
         }
@@ -648,7 +682,8 @@
         a.dispatchEvent(event);
         console.log(file)
       },
-      fillFormData(fields, formConf) {
+      //for formgenerator
+      /*fillFormData(fields, formConf) {
         const { formModel, formRef } = formConf
         fields.forEach((item, i) => {
           const vModel = item.__vModel__
@@ -676,6 +711,33 @@
           }
           if (Array.isArray(item.__config__.children)) {
             this.fillFormData(item.__config__.children, formConf)
+          }
+        })
+      },*/
+      fillFormData(list, formConf) { // for formdesigner 
+        console.log("fillFormData list=",list);
+        console.log("fillFormData formConf=",formConf);
+        list.forEach((item, i) => {
+          // 特殊处理el-upload，包括 回显图片
+          if (item.ele === 'el-upload') {
+            const val = formConf.formValue[item.id];
+            //console.log('item=',item['list-type'])
+            if(item['list-type'] != 'text') {//图片
+              this.fileList = []    //隐藏加的el-upload文件列表
+              //item['file-list'] = JSON.parse(val)
+              item['file-list'] = JSON.parse(val)
+              console.log("图片fillFormData item['file-list']",item['file-list'])
+            }
+            else {  //列表
+              console.log("列表fillFormData val",val)
+              this.fileList = JSON.parse(val)
+              item['file-list'] = [] //隐藏加的表单设计器的文件列表
+            }
+            // 回显图片
+            this.fileDisplay = true
+          }
+          if (Array.isArray(item.columns)) {
+            this.fillFormData(item.columns, formConf)
           }
         })
       },
@@ -773,13 +835,36 @@
           console.log("this.variables=",variables)
         }
       },
-      /** 申请流程表单数据提交 */
-      submitForm(data) {
+      /** 申请流程表单formgenerator数据提交 */
+      /*submitForm(data) {
         if (data) {
           const variables = data.valData;
           const formData = data.formData;
           formData.disabled = true;
           formData.formBtns = false;
+          if (this.taskForm.procDefId) {
+            variables.variables = formData;
+            console.log("variables=", variables);
+            // 启动流程并将表单数据加入流程变量
+            definitionStartByDefId(this.taskForm.procDefId, JSON.stringify(variables)).then(res => {
+              this.$message.success(res.message);
+              this.goBack();
+            })
+          }
+        }
+      },*/
+      /** 申请流程表单formdesigner数据提交 nbacheng2022-09-05 */
+      submitForm() {
+        this.$refs.formBuilder.validate();
+        console.log("submitForm formVal",this.formVal);
+        console.log("submitForm formCode",this.formCode);
+        this.formViewOpen = true;
+        this.formConfOpen = false;
+        if (this.formVal) {
+          const variables=JSON.parse(this.formVal);
+          const formData = JSON.parse(this.formCode);
+          formData.formValue = JSON.parse(this.formVal);
+
           if (this.taskForm.procDefId) {
             variables.variables = formData;
             console.log("variables=", variables);

@@ -59,9 +59,16 @@ import { dateStr, formatDateTime } from "@/utils/im/ChatUtils.js";
 if (process.env.VUE_APP_MODE === "web") {
   Vue.prototype.winControl = require("@/mode/webControl").default;
 } 
+//For erp add by nbacheng 2022-08-25
+import utils from '@/utils/utils'
+//for formdesigner  add by nbchang 2022-09-03
+import formDesigner from '@/components/formdesigner/components/index'
+
 //For IM add by nbacheng 2022-08-17
 Vue.use(ElementUI);
 Vue.use(ViewUI);
+//for formdesigner  add by nbchang 2022-09-03
+Vue.use(formDesigner);
 //表单验证
 import { rules } from '@/utils/rules'
 Vue.prototype.rules = rules
@@ -69,6 +76,8 @@ Vue.config.productionTip = false
 //IM
 Vue.prototype.formatDateTime = formatDateTime;
 Vue.prototype.dateStr = dateStr;
+//For erp add by nbacheng 2022-08-25
+Vue.prototype.$utils = utils
 
 Vue.use(Storage, config.storageOptions)
 Vue.use(Antd)
