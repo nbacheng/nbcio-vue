@@ -856,11 +856,11 @@
       /** 申请流程表单formdesigner数据提交 nbacheng2022-09-05 */
       submitForm() {
         this.$refs.formBuilder.validate();
-        console.log("submitForm formVal",this.formVal);
-        console.log("submitForm formCode",this.formCode);
-        this.formViewOpen = true;
-        this.formConfOpen = false;
-        if (this.formVal) {
+        if(this.formVal !='') {
+          console.log("submitForm formVal",this.formVal);
+          console.log("submitForm formCode",this.formCode);
+          this.formViewOpen = true;
+          this.formConfOpen = false;
           const variables=JSON.parse(this.formVal);
           const formData = JSON.parse(this.formCode);
           formData.formValue = JSON.parse(this.formVal);
